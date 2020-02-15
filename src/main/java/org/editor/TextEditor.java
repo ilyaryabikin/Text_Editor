@@ -7,14 +7,18 @@ import org.editor.command.*;
 import org.editor.searcher.Searcher;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.net.URL;
 
 public class TextEditor extends JFrame {
-    private static final int FRAME_MIN_WIDTH = 550;
-    private static final int FRAME_MIN_HEIGHT = 500;
-    private static final String RESOURCES_PATH = "src/main/resources/icons/";
+    private static final Dimension FRAME_MIN_SIZE = new Dimension(550, 500);
+    private static final Dimension UTIL_PANEL_MIN_SIZE = new Dimension(430, 25);
+    private static final Dimension SEARCH_FIELD_MIN_SIZE = new Dimension(220, 22);
+    private static final Border TEXT_PANEL_BORDER = BorderFactory.createEmptyBorder(0, 10, 10, 10);
+    private static final Border UTIL_PANEL_BORDER = BorderFactory.createEmptyBorder(0, 5, 0, 10);
 
     private JTextArea textArea;
     private JTextField searchField;
@@ -34,7 +38,7 @@ public class TextEditor extends JFrame {
         UIManager.put("Button.arc", 0);
         UIManager.put("Component.arc", 0);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(FRAME_MIN_WIDTH, FRAME_MIN_HEIGHT));
+        setMinimumSize(FRAME_MIN_SIZE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         initMenu();
@@ -130,9 +134,9 @@ public class TextEditor extends JFrame {
 
     private void initUtilPanel() {
         JPanel utilPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        utilPanel.setMinimumSize(new Dimension(430, 25));
-        utilPanel.setSize(new Dimension(430, 25));
-        utilPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 10));
+        utilPanel.setMinimumSize(UTIL_PANEL_MIN_SIZE);
+        utilPanel.setSize(UTIL_PANEL_MIN_SIZE);
+        utilPanel.setBorder(UTIL_PANEL_BORDER);
 
         fileChooser = new JFileChooser();
         fileChooser.setName("FileChooser");
@@ -163,12 +167,11 @@ public class TextEditor extends JFrame {
             }
         });
 
-
         searchField = new JTextField();
         searchField.setName("SearchField");
         searchField.setToolTipText("Enter Search Query");
-        searchField.setMinimumSize(new Dimension(220, 22));
-        searchField.setPreferredSize(new Dimension(220, 22));
+        searchField.setMinimumSize(SEARCH_FIELD_MIN_SIZE);
+        searchField.setPreferredSize(SEARCH_FIELD_MIN_SIZE);
 
         JButton startSearchButton = new JButton("Search");
         startSearchButton.setToolTipText("Start Searching");
@@ -176,13 +179,13 @@ public class TextEditor extends JFrame {
         startSearchButton.addActionListener(e -> new StartSearchCommand(this).execute());
 
         JButton previousMatchButton = new JButton();
-        previousMatchButton.setIcon(new ImageIcon(RESOURCES_PATH + "back.png"));
+        previousMatchButton.setIcon(new ImageIcon(getIcon("back.png")));
         previousMatchButton.setToolTipText("Previous Matched Group");
         previousMatchButton.setName("PreviousMatchButton");
         previousMatchButton.addActionListener(e -> new PreviousMatchCommand(this).execute());
 
         JButton nextMatchButton = new JButton();
-        nextMatchButton.setIcon(new ImageIcon(RESOURCES_PATH + "forward.png"));
+        nextMatchButton.setIcon(new ImageIcon(getIcon("forward.png")));
         nextMatchButton.setToolTipText("Next Matched Group");
         nextMatchButton.setName("NextMatchButton");
         nextMatchButton.addActionListener(e -> new NextMatchCommand(this).execute());
@@ -204,10 +207,11 @@ public class TextEditor extends JFrame {
 
     private void initTextPanel() {
         JPanel textPanel = new JPanel(new BorderLayout());
-        textPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        textPanel.setBorder(TEXT_PANEL_BORDER);
 
         textArea = new JTextArea();
         textArea.setName("TextArea");
+        textArea.setTabSize(4);
         textArea.setAutoscrolls(true);
 
         JScrollPane scrollPane = new JScrollPane(textArea,
@@ -218,6 +222,10 @@ public class TextEditor extends JFrame {
         textPanel.add(scrollPane, BorderLayout.CENTER);
 
         add(textPanel, BorderLayout.CENTER);
+    }
+
+    private URL getIcon(String filename) {
+        return TextEditor.class.getResource("/icons/" + filename);
     }
 
     public JTextArea getTextArea() {

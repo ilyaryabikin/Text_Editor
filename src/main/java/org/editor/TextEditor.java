@@ -11,7 +11,6 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.net.URL;
 
 public class TextEditor extends JFrame {
     private static final Dimension FRAME_MIN_SIZE = new Dimension(550, 500);
@@ -138,7 +137,7 @@ public class TextEditor extends JFrame {
 
         fileChooser = new JFileChooser();
         fileChooser.setName("FileChooser");
-        fileChooser.setDialogTitle("Select a file");
+        fileChooser.setDialogTitle("Select a File");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         JButton openButton = new JButton();
@@ -175,19 +174,20 @@ public class TextEditor extends JFrame {
         startSearchButton.addActionListener(e -> new StartSearchCommand(this).execute());
 
         JButton previousMatchButton = new JButton();
-        previousMatchButton.setIcon(new ImageIcon(getIcon("back.png")));
+        previousMatchButton.setIcon(getIcon("back.png"));
         previousMatchButton.setToolTipText("Previous Matched Group");
         previousMatchButton.setName("PreviousMatchButton");
         previousMatchButton.addActionListener(e -> new PreviousMatchCommand(this).execute());
 
         JButton nextMatchButton = new JButton();
-        nextMatchButton.setIcon(new ImageIcon(getIcon("forward.png")));
+        nextMatchButton.setIcon(getIcon("forward.png"));
         nextMatchButton.setToolTipText("Next Matched Group");
         nextMatchButton.setName("NextMatchButton");
         nextMatchButton.addActionListener(e -> new NextMatchCommand(this).execute());
 
         useRegexCheckbox = new JCheckBox("Use regex");
         useRegexCheckbox.setName("UseRegExCheckbox");
+        useRegexCheckbox.setToolTipText("Handle Search Query as Regular Expression");
         useRegexCheckbox.addActionListener(e -> isRegex = useRegexCheckbox.isSelected());
 
         utilLayout.setHorizontalGroup(
@@ -234,8 +234,8 @@ public class TextEditor extends JFrame {
         add(textPanel, BorderLayout.CENTER);
     }
 
-    private URL getIcon(String filename) {
-        return TextEditor.class.getResource("/icons/" + filename);
+    private ImageIcon getIcon(String filename) {
+        return new ImageIcon(TextEditor.class.getResource("/icons/" + filename));
     }
 
     public JTextArea getTextArea() {

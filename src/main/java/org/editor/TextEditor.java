@@ -15,10 +15,7 @@ import java.net.URL;
 
 public class TextEditor extends JFrame {
     private static final Dimension FRAME_MIN_SIZE = new Dimension(550, 500);
-    private static final Dimension UTIL_PANEL_MIN_SIZE = new Dimension(430, 25);
-    private static final Dimension SEARCH_FIELD_MIN_SIZE = new Dimension(220, 22);
-    private static final Border TEXT_PANEL_BORDER = BorderFactory.createEmptyBorder(0, 10, 10, 10);
-    private static final Border UTIL_PANEL_BORDER = BorderFactory.createEmptyBorder(0, 5, 0, 10);
+    private static final Border TEXT_PANEL_BORDER = BorderFactory.createEmptyBorder(0, 5, 10, 5);
 
     private JTextArea textArea;
     private JTextField searchField;
@@ -133,10 +130,11 @@ public class TextEditor extends JFrame {
     }
 
     private void initUtilPanel() {
-        JPanel utilPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        utilPanel.setMinimumSize(UTIL_PANEL_MIN_SIZE);
-        utilPanel.setSize(UTIL_PANEL_MIN_SIZE);
-        utilPanel.setBorder(UTIL_PANEL_BORDER);
+        JPanel utilPanel = new JPanel();
+        GroupLayout utilLayout = new GroupLayout(utilPanel);
+        utilLayout.setAutoCreateGaps(true);
+        utilLayout.setAutoCreateContainerGaps(true);
+        utilPanel.setLayout(utilLayout);
 
         fileChooser = new JFileChooser();
         fileChooser.setName("FileChooser");
@@ -170,8 +168,6 @@ public class TextEditor extends JFrame {
         searchField = new JTextField();
         searchField.setName("SearchField");
         searchField.setToolTipText("Enter Search Query");
-        searchField.setMinimumSize(SEARCH_FIELD_MIN_SIZE);
-        searchField.setPreferredSize(SEARCH_FIELD_MIN_SIZE);
 
         JButton startSearchButton = new JButton("Search");
         startSearchButton.setToolTipText("Start Searching");
@@ -194,13 +190,27 @@ public class TextEditor extends JFrame {
         useRegexCheckbox.setName("UseRegExCheckbox");
         useRegexCheckbox.addActionListener(e -> isRegex = useRegexCheckbox.isSelected());
 
-        utilPanel.add(openButton);
-        utilPanel.add(saveButton);
-        utilPanel.add(searchField);
-        utilPanel.add(startSearchButton);
-        utilPanel.add(previousMatchButton);
-        utilPanel.add(nextMatchButton);
-        utilPanel.add(useRegexCheckbox);
+        utilLayout.setHorizontalGroup(
+                utilLayout.createSequentialGroup()
+                .addComponent(openButton)
+                .addComponent(saveButton)
+                .addComponent(searchField)
+                .addComponent(startSearchButton)
+                .addComponent(previousMatchButton)
+                .addComponent(nextMatchButton)
+                .addComponent(useRegexCheckbox)
+        );
+        utilLayout.setVerticalGroup(
+                utilLayout.createSequentialGroup()
+                .addGroup(utilLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(openButton)
+                        .addComponent(saveButton)
+                        .addComponent(searchField)
+                        .addComponent(startSearchButton)
+                        .addComponent(previousMatchButton)
+                        .addComponent(nextMatchButton)
+                        .addComponent(useRegexCheckbox))
+        );
 
         add(utilPanel, BorderLayout.PAGE_START);
     }

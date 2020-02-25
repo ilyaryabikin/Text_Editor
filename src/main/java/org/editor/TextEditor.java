@@ -5,6 +5,7 @@ import com.formdev.flatlaf.icons.FlatFileViewComputerIcon;
 import com.formdev.flatlaf.icons.FlatFileViewFloppyDriveIcon;
 import com.formdev.flatlaf.icons.FlatOptionPaneErrorIcon;
 import com.formdev.flatlaf.icons.FlatOptionPaneInformationIcon;
+import net.miginfocom.swing.MigLayout;
 import org.editor.command.*;
 import org.editor.exception.NoSpecifiedQueryException;
 import org.editor.searcher.Searcher;
@@ -142,10 +143,7 @@ public class TextEditor extends JFrame {
 
     private void initUtilPanel() {
         JPanel utilPanel = new JPanel();
-        GroupLayout utilLayout = new GroupLayout(utilPanel);
-        utilLayout.setAutoCreateGaps(true);
-        utilLayout.setAutoCreateContainerGaps(true);
-        utilPanel.setLayout(utilLayout);
+        utilPanel.setLayout(new MigLayout("", "[][][grow][][][][]"));
 
         fileChooser = new JFileChooser();
         fileChooser.setName("FileChooser");
@@ -211,27 +209,13 @@ public class TextEditor extends JFrame {
         useRegexCheckbox.setToolTipText("Handle Search Query as Regular Expression");
         useRegexCheckbox.addActionListener(e -> isRegex = useRegexCheckbox.isSelected());
 
-        utilLayout.setHorizontalGroup(
-                utilLayout.createSequentialGroup()
-                .addComponent(openButton)
-                .addComponent(saveButton)
-                .addComponent(searchField)
-                .addComponent(startSearchButton)
-                .addComponent(previousMatchButton)
-                .addComponent(nextMatchButton)
-                .addComponent(useRegexCheckbox)
-        );
-        utilLayout.setVerticalGroup(
-                utilLayout.createSequentialGroup()
-                .addGroup(utilLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(openButton)
-                        .addComponent(saveButton)
-                        .addComponent(searchField)
-                        .addComponent(startSearchButton)
-                        .addComponent(previousMatchButton)
-                        .addComponent(nextMatchButton)
-                        .addComponent(useRegexCheckbox))
-        );
+        utilPanel.add(openButton, "gap");
+        utilPanel.add(saveButton, "gap");
+        utilPanel.add(searchField, "gap, growx");
+        utilPanel.add(startSearchButton, "gap");
+        utilPanel.add(previousMatchButton, "gap");
+        utilPanel.add(nextMatchButton, "gap");
+        utilPanel.add(useRegexCheckbox, "gap");
 
         add(utilPanel, BorderLayout.PAGE_START);
     }

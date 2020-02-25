@@ -1,6 +1,7 @@
 package org.editor.command;
 
 import org.editor.TextEditor;
+import org.editor.exception.NoSpecifiedQueryException;
 import org.editor.searcher.Searcher;
 
 import javax.swing.*;
@@ -12,9 +13,12 @@ public class StartSearchCommand extends Command {
     }
 
     @Override
-    public void execute() {
-        Searcher searcher = textEditor.getSearcher();
+    public void execute() throws NoSpecifiedQueryException {
         JTextField searchField = textEditor.getSearchField();
+        if (searchField.getText() == null || searchField.getText().isEmpty()) {
+            throw new NoSpecifiedQueryException("You should specify search query first");
+        }
+        Searcher searcher = textEditor.getSearcher();
         JTextArea textArea = textEditor.getTextArea();
         boolean isRegex = textEditor.isRegex();
 

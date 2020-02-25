@@ -48,6 +48,14 @@ public class Searcher {
         return currentWord.wordLength;
     }
 
+    public int getMatchedCount() {
+        if (matchedList == null) {
+            return -1;
+        } else {
+            return matchedList.size();
+        }
+    }
+
     private static class WordOccurrence {
         private int startIndex;
         private int wordLength;

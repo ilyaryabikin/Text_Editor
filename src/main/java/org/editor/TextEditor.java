@@ -3,7 +3,10 @@ package org.editor;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.icons.FlatFileViewComputerIcon;
 import com.formdev.flatlaf.icons.FlatFileViewFloppyDriveIcon;
+import com.formdev.flatlaf.icons.FlatOptionPaneErrorIcon;
+import com.formdev.flatlaf.icons.FlatOptionPaneInformationIcon;
 import org.editor.command.*;
+import org.editor.exception.NoSpecifiedQueryException;
 import org.editor.searcher.Searcher;
 
 import javax.swing.*;
@@ -59,7 +62,7 @@ public class TextEditor extends JFrame {
             try {
                 new OpenCommand(this).execute();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                showErrorPane(ex.getMessage());
             }
         });
 
@@ -69,7 +72,7 @@ public class TextEditor extends JFrame {
             try {
                 new SaveCommand(this).execute();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                showErrorPane(ex.getMessage());
             }
         });
 
@@ -79,7 +82,7 @@ public class TextEditor extends JFrame {
             try {
                 new SaveAsCommand(this).execute();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                showErrorPane(ex.getMessage());
             }
         });
 
@@ -100,7 +103,16 @@ public class TextEditor extends JFrame {
 
         JMenuItem searchMenuItem = new JMenuItem("Start search");
         searchMenuItem.setName("MenuStartSearch");
-        searchMenuItem.addActionListener(e -> new StartSearchCommand(this).execute());
+        searchMenuItem.addActionListener(e -> {
+            try {
+                new StartSearchCommand(this).execute();
+                if (searcher.getMatchedCount() <= 0) {
+                    showMessagePane("Matched substrings was not found");
+                }
+            } catch (NoSpecifiedQueryException ex) {
+                showMessagePane(ex.getMessage());
+            }
+        });
 
         JMenuItem previousMatchMenuItem = new JMenuItem("Previous match");
         previousMatchMenuItem.setName("MenuPreviousMatch");
@@ -148,7 +160,7 @@ public class TextEditor extends JFrame {
             try {
                 new OpenCommand(this).execute();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                showErrorPane(ex.getMessage());
             }
         });
 
@@ -160,7 +172,7 @@ public class TextEditor extends JFrame {
             try {
                 new SaveCommand(this).execute();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                showErrorPane(ex.getMessage());
             }
         });
 
@@ -171,7 +183,16 @@ public class TextEditor extends JFrame {
         JButton startSearchButton = new JButton("Search");
         startSearchButton.setToolTipText("Start Searching");
         startSearchButton.setName("StartSearchButton");
-        startSearchButton.addActionListener(e -> new StartSearchCommand(this).execute());
+        startSearchButton.addActionListener(e -> {
+            try {
+                new StartSearchCommand(this).execute();
+                if (searcher.getMatchedCount() <= 0) {
+                    showMessagePane("Matched substrings was not found");
+                }
+            } catch (NoSpecifiedQueryException ex) {
+                showMessagePane(ex.getMessage());
+            }
+        });
 
         JButton previousMatchButton = new JButton();
         previousMatchButton.setIcon(getIcon("back.png"));
@@ -232,6 +253,26 @@ public class TextEditor extends JFrame {
         textPanel.add(scrollPane, BorderLayout.CENTER);
 
         add(textPanel, BorderLayout.CENTER);
+    }
+
+    private void showErrorPane(String message) {
+        JOptionPane.showMessageDialog(
+                this,
+                message,
+                "Error",
+                JOptionPane.ERROR_MESSAGE,
+                new FlatOptionPaneErrorIcon()
+        );
+    }
+
+    private void showMessagePane(String message) {
+        JOptionPane.showMessageDialog(
+                this,
+                message,
+                "Info",
+                JOptionPane.INFORMATION_MESSAGE,
+                new FlatOptionPaneInformationIcon()
+        );
     }
 
     private ImageIcon getIcon(String filename) {

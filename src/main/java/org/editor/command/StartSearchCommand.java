@@ -15,7 +15,7 @@ public class StartSearchCommand extends Command {
     @Override
     public void execute() throws NoSpecifiedQueryException {
         JTextField searchField = textEditor.getSearchField();
-        if (searchField.getText() == null || searchField.getText().isEmpty()) {
+        if (searchField.getText().isEmpty()) {
             throw new NoSpecifiedQueryException("You should specify search query first");
         }
         Searcher searcher = textEditor.getSearcher();
@@ -32,10 +32,16 @@ public class StartSearchCommand extends Command {
 
             @Override
             protected void done() {
-                textArea.setCaretPosition(searcher.getStartIndex() + searcher.getWordLength());
-                textArea.select(searcher.getStartIndex(), searcher.getStartIndex() + searcher.getWordLength());
-                textArea.grabFocus();
+                if (searcher.getMatchedCount() > 0) {
+                    setFirstMatched(textArea, searcher);
+                }
             }
         }.execute();
+    }
+
+    private void setFirstMatched(JTextArea textArea, Searcher searcher) {
+        textArea.setCaretPosition(searcher.getStartIndex() + searcher.getWordLength());
+        textArea.select(searcher.getStartIndex(), searcher.getStartIndex() + searcher.getWordLength());
+        textArea.grabFocus();
     }
 }

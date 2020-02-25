@@ -107,9 +107,6 @@ public class TextEditor extends JFrame {
         searchMenuItem.addActionListener(e -> {
             try {
                 new StartSearchCommand(this).execute();
-                if (searcher.getMatchedCount() <= 0) {
-                    showMessagePane("Matched substrings was not found");
-                }
             } catch (NoSpecifiedQueryException ex) {
                 showMessagePane(ex.getMessage());
             }
@@ -117,11 +114,23 @@ public class TextEditor extends JFrame {
 
         JMenuItem previousMatchMenuItem = new JMenuItem("Previous match");
         previousMatchMenuItem.setName("MenuPreviousMatch");
-        previousMatchMenuItem.addActionListener(e -> new PreviousMatchCommand(this).execute());
+        previousMatchMenuItem.addActionListener(e -> {
+            try {
+                new PreviousMatchCommand(this).execute();
+            } catch (Exception ex) {
+                showMessagePane(ex.getMessage());
+            }
+        });
 
         JMenuItem nextMatchMenuItem = new JMenuItem("Next match");
         nextMatchMenuItem.setName("MenuNextMatch");
-        nextMatchMenuItem.addActionListener(e -> new NextMatchCommand(this).execute());
+        nextMatchMenuItem.addActionListener(e -> {
+            try {
+                new NextMatchCommand(this).execute();
+            } catch (Exception ex) {
+                showMessagePane(ex.getMessage());
+            }
+        });
 
         JMenuItem useRegexMenuItem = new JMenuItem("Use regex");
         useRegexMenuItem.setName("MenuUseRegExp");
@@ -184,9 +193,6 @@ public class TextEditor extends JFrame {
         startSearchButton.addActionListener(e -> {
             try {
                 new StartSearchCommand(this).execute();
-                if (searcher.getMatchedCount() <= 0) {
-                    showMessagePane("Matched substrings was not found");
-                }
             } catch (NoSpecifiedQueryException ex) {
                 showMessagePane(ex.getMessage());
             }
@@ -196,13 +202,25 @@ public class TextEditor extends JFrame {
         previousMatchButton.setIcon(getIcon("back.png"));
         previousMatchButton.setToolTipText("Previous Matched Group");
         previousMatchButton.setName("PreviousMatchButton");
-        previousMatchButton.addActionListener(e -> new PreviousMatchCommand(this).execute());
+        previousMatchButton.addActionListener(e -> {
+            try {
+                new PreviousMatchCommand(this).execute();
+            } catch (Exception ex) {
+                showMessagePane(ex.getMessage());
+            }
+        });
 
         JButton nextMatchButton = new JButton();
         nextMatchButton.setIcon(getIcon("forward.png"));
         nextMatchButton.setToolTipText("Next Matched Group");
         nextMatchButton.setName("NextMatchButton");
-        nextMatchButton.addActionListener(e -> new NextMatchCommand(this).execute());
+        nextMatchButton.addActionListener(e -> {
+            try {
+                new NextMatchCommand(this).execute();
+            } catch (Exception ex) {
+                showMessagePane(ex.getMessage());
+            }
+        });
 
         useRegexCheckbox = new JCheckBox("Use regex");
         useRegexCheckbox.setName("UseRegExCheckbox");

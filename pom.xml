@@ -26,7 +26,16 @@
             <artifactId>miglayout-swing</artifactId>
             <version>5.2</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-swing</artifactId>
+            <version>11.3.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.kordamp.ikonli</groupId>
+            <artifactId>ikonli-icomoon-pack</artifactId>
+            <version>11.3.5</version>
+        </dependency>
     </dependencies>
 
     <build>

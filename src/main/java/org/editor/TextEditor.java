@@ -1,14 +1,14 @@
 package org.editor;
 
 import com.formdev.flatlaf.FlatLightLaf;
-import com.formdev.flatlaf.icons.FlatFileViewComputerIcon;
-import com.formdev.flatlaf.icons.FlatFileViewFloppyDriveIcon;
 import com.formdev.flatlaf.icons.FlatOptionPaneErrorIcon;
 import com.formdev.flatlaf.icons.FlatOptionPaneInformationIcon;
 import net.miginfocom.swing.MigLayout;
 import org.editor.command.*;
 import org.editor.exception.NoSpecifiedQueryException;
 import org.editor.searcher.Searcher;
+import org.kordamp.ikonli.icomoon.Icomoon;
+import org.kordamp.ikonli.swing.FontIcon;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -19,6 +19,7 @@ import java.io.IOException;
 public class TextEditor extends JFrame {
     private static final Dimension FRAME_MIN_SIZE = new Dimension(550, 500);
     private static final Border TEXT_PANEL_BORDER = BorderFactory.createEmptyBorder(0, 5, 10, 5);
+    private static final Color ICONS_COLOR = new Color(110, 110, 110);
 
     private JTextArea textArea;
     private JTextField searchField;
@@ -160,7 +161,7 @@ public class TextEditor extends JFrame {
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         JButton openButton = new JButton();
-        openButton.setIcon(new FlatFileViewComputerIcon());
+        openButton.setIcon(FontIcon.of(Icomoon.ICM_FOLDER_OPEN, ICONS_COLOR));
         openButton.setToolTipText("Open File");
         openButton.setName("OpenButton");
         openButton.addActionListener(e -> {
@@ -172,7 +173,7 @@ public class TextEditor extends JFrame {
         });
 
         JButton saveButton = new JButton();
-        saveButton.setIcon(new FlatFileViewFloppyDriveIcon());
+        saveButton.setIcon(FontIcon.of(Icomoon.ICM_FLOPPY_DISK, ICONS_COLOR));
         saveButton.setToolTipText("Save File");
         saveButton.setName("SaveButton");
         saveButton.addActionListener(e -> {
@@ -187,7 +188,8 @@ public class TextEditor extends JFrame {
         searchField.setName("SearchField");
         searchField.setToolTipText("Enter Search Query");
 
-        JButton startSearchButton = new JButton("Search");
+        JButton startSearchButton = new JButton();
+        startSearchButton.setIcon(FontIcon.of(Icomoon.ICM_SEARCH, ICONS_COLOR));
         startSearchButton.setToolTipText("Start Searching");
         startSearchButton.setName("StartSearchButton");
         startSearchButton.addActionListener(e -> {
@@ -199,7 +201,7 @@ public class TextEditor extends JFrame {
         });
 
         JButton previousMatchButton = new JButton();
-        previousMatchButton.setIcon(getIcon("back.png"));
+        previousMatchButton.setIcon(FontIcon.of(Icomoon.ICM_ARROW_LEFT2, ICONS_COLOR));
         previousMatchButton.setToolTipText("Previous Matched Group");
         previousMatchButton.setName("PreviousMatchButton");
         previousMatchButton.addActionListener(e -> {
@@ -211,7 +213,7 @@ public class TextEditor extends JFrame {
         });
 
         JButton nextMatchButton = new JButton();
-        nextMatchButton.setIcon(getIcon("forward.png"));
+        nextMatchButton.setIcon(FontIcon.of(Icomoon.ICM_ARROW_RIGHT2, ICONS_COLOR));
         nextMatchButton.setToolTipText("Next Matched Group");
         nextMatchButton.setName("NextMatchButton");
         nextMatchButton.addActionListener(e -> {
@@ -275,10 +277,6 @@ public class TextEditor extends JFrame {
                 JOptionPane.INFORMATION_MESSAGE,
                 new FlatOptionPaneInformationIcon()
         );
-    }
-
-    private ImageIcon getIcon(String filename) {
-        return new ImageIcon(TextEditor.class.getResource("/icons/" + filename));
     }
 
     public JTextArea getTextArea() {

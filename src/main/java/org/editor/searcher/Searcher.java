@@ -6,11 +6,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Searcher {
+
     private List<WordOccurrence> matchedList;
     private int cursor;
     private WordOccurrence currentWord;
 
-    public void search(String query, String text, boolean isRegex) {
+    private boolean isRegex = false;
+
+    public void search(String query, String text) {
         matchedList = new ArrayList<>();
         if (!isRegex) {
             query = Pattern.quote(query);
@@ -56,9 +59,18 @@ public class Searcher {
         }
     }
 
+    public boolean isRegex() {
+        return isRegex;
+    }
+
+    public void setRegex(boolean regex) {
+        isRegex = regex;
+    }
+
     private static class WordOccurrence {
-        private int startIndex;
-        private int wordLength;
+
+        private final int startIndex;
+        private final int wordLength;
 
         private WordOccurrence(int startIndex, int wordLength) {
             this.startIndex = startIndex;

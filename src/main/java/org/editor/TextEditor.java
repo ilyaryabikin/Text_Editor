@@ -3,20 +3,43 @@ package org.editor;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.icons.FlatOptionPaneErrorIcon;
 import com.formdev.flatlaf.icons.FlatOptionPaneInformationIcon;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.border.Border;
 import net.miginfocom.swing.MigLayout;
-import org.editor.command.*;
+import org.editor.command.ExitCommand;
+import org.editor.command.NextMatchCommand;
+import org.editor.command.OpenCommand;
+import org.editor.command.PreviousMatchCommand;
+import org.editor.command.SaveAsCommand;
+import org.editor.command.SaveCommand;
+import org.editor.command.StartSearchCommand;
 import org.editor.exception.NoSpecifiedQueryException;
 import org.editor.searcher.Searcher;
 import org.kordamp.ikonli.icomoon.Icomoon;
 import org.kordamp.ikonli.swing.FontIcon;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.io.IOException;
-
 public class TextEditor extends JFrame {
+
     private static final Dimension FRAME_MIN_SIZE = new Dimension(550, 500);
     private static final Border TEXT_PANEL_BORDER = BorderFactory.createEmptyBorder(0, 5, 10, 5);
     private static final Color ICONS_COLOR = new Color(110, 110, 110);
@@ -25,28 +48,37 @@ public class TextEditor extends JFrame {
     private JTextField searchField;
     private JFileChooser fileChooser;
     private JCheckBox useRegexCheckbox;
-    private boolean isRegex = false;
 
-    private Searcher searcher = new Searcher();
+    private final Searcher searcher = new Searcher();
 
     public TextEditor() {
         super("Text Editor");
+
+        initDefaultFrameProperties();
+
+        initMenu();
+        initUtilPanel();
+        initTextPanel();
+
+        pack();
+
+        setVisible(true);
+    }
+
+    private void initDefaultFrameProperties() {
         FlatLightLaf.install();
+
         UIManager.put("Component.arrowType", "triangle");
         UIManager.put("Component.hideMnemonics", false);
         UIManager.put("ScrollBar.showButtons", true);
         UIManager.put("ScrollBar.width", 12);
         UIManager.put("Button.arc", 0);
         UIManager.put("Component.arc", 0);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(FRAME_MIN_SIZE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-        initMenu();
-        initUtilPanel();
-        initTextPanel();
-        pack();
-        setVisible(true);
     }
 
     private void initMenu() {
@@ -62,7 +94,7 @@ public class TextEditor extends JFrame {
         openMenuItem.setName("MenuOpen");
         openMenuItem.addActionListener(e -> {
             try {
-                new OpenCommand(this).execute();
+                new OpenCommand(fileChooser, textArea).execute();
             } catch (IOException ex) {
                 showErrorPane(ex.getMessage());
             }
@@ -72,7 +104,7 @@ public class TextEditor extends JFrame {
         saveMenuItem.setName("MenuSave");
         saveMenuItem.addActionListener(e -> {
             try {
-                new SaveCommand(this).execute();
+                new SaveCommand(fileChooser, textArea).execute();
             } catch (IOException ex) {
                 showErrorPane(ex.getMessage());
             }
@@ -82,7 +114,7 @@ public class TextEditor extends JFrame {
         saveAsMenuItem.setName("MenuSaveAs");
         saveAsMenuItem.addActionListener(e -> {
             try {
-                new SaveAsCommand(this).execute();
+                new SaveAsCommand(fileChooser, textArea).execute();
             } catch (IOException ex) {
                 showErrorPane(ex.getMessage());
             }
@@ -107,7 +139,7 @@ public class TextEditor extends JFrame {
         searchMenuItem.setName("MenuStartSearch");
         searchMenuItem.addActionListener(e -> {
             try {
-                new StartSearchCommand(this).execute();
+                new StartSearchCommand(searcher, textArea, searchField).execute();
             } catch (NoSpecifiedQueryException ex) {
                 showMessagePane(ex.getMessage());
             }
@@ -117,7 +149,7 @@ public class TextEditor extends JFrame {
         previousMatchMenuItem.setName("MenuPreviousMatch");
         previousMatchMenuItem.addActionListener(e -> {
             try {
-                new PreviousMatchCommand(this).execute();
+                new PreviousMatchCommand(searcher, textArea).execute();
             } catch (Exception ex) {
                 showMessagePane(ex.getMessage());
             }
@@ -127,7 +159,7 @@ public class TextEditor extends JFrame {
         nextMatchMenuItem.setName("MenuNextMatch");
         nextMatchMenuItem.addActionListener(e -> {
             try {
-                new NextMatchCommand(this).execute();
+                new NextMatchCommand(searcher, textArea).execute();
             } catch (Exception ex) {
                 showMessagePane(ex.getMessage());
             }
@@ -138,10 +170,10 @@ public class TextEditor extends JFrame {
         useRegexMenuItem.addActionListener(e -> {
             if (useRegexCheckbox.isSelected()) {
                 useRegexCheckbox.setSelected(false);
-                isRegex = false;
+                searcher.setRegex(false);
             } else {
                 useRegexCheckbox.setSelected(true);
-                isRegex = true;
+                searcher.setRegex(true);
             }
         });
 
@@ -166,7 +198,7 @@ public class TextEditor extends JFrame {
         openButton.setName("OpenButton");
         openButton.addActionListener(e -> {
             try {
-                new OpenCommand(this).execute();
+                new OpenCommand(fileChooser, textArea).execute();
             } catch (IOException ex) {
                 showErrorPane(ex.getMessage());
             }
@@ -178,7 +210,7 @@ public class TextEditor extends JFrame {
         saveButton.setName("SaveButton");
         saveButton.addActionListener(e -> {
             try {
-                new SaveCommand(this).execute();
+                new SaveCommand(fileChooser, textArea).execute();
             } catch (IOException ex) {
                 showErrorPane(ex.getMessage());
             }
@@ -194,7 +226,7 @@ public class TextEditor extends JFrame {
         startSearchButton.setName("StartSearchButton");
         startSearchButton.addActionListener(e -> {
             try {
-                new StartSearchCommand(this).execute();
+                new StartSearchCommand(searcher, textArea, searchField).execute();
             } catch (NoSpecifiedQueryException ex) {
                 showMessagePane(ex.getMessage());
             }
@@ -206,7 +238,7 @@ public class TextEditor extends JFrame {
         previousMatchButton.setName("PreviousMatchButton");
         previousMatchButton.addActionListener(e -> {
             try {
-                new PreviousMatchCommand(this).execute();
+                new PreviousMatchCommand(searcher, textArea).execute();
             } catch (Exception ex) {
                 showMessagePane(ex.getMessage());
             }
@@ -218,7 +250,7 @@ public class TextEditor extends JFrame {
         nextMatchButton.setName("NextMatchButton");
         nextMatchButton.addActionListener(e -> {
             try {
-                new NextMatchCommand(this).execute();
+                new NextMatchCommand(searcher, textArea).execute();
             } catch (Exception ex) {
                 showMessagePane(ex.getMessage());
             }
@@ -227,7 +259,7 @@ public class TextEditor extends JFrame {
         useRegexCheckbox = new JCheckBox("Use regex");
         useRegexCheckbox.setName("UseRegExCheckbox");
         useRegexCheckbox.setToolTipText("Handle Search Query as Regular Expression");
-        useRegexCheckbox.addActionListener(e -> isRegex = useRegexCheckbox.isSelected());
+        useRegexCheckbox.addActionListener(e -> searcher.setRegex(useRegexCheckbox.isSelected()));
 
         utilPanel.add(openButton, "gap");
         utilPanel.add(saveButton, "gap");
@@ -277,25 +309,5 @@ public class TextEditor extends JFrame {
                 JOptionPane.INFORMATION_MESSAGE,
                 new FlatOptionPaneInformationIcon()
         );
-    }
-
-    public JTextArea getTextArea() {
-        return textArea;
-    }
-
-    public JTextField getSearchField() {
-        return searchField;
-    }
-
-    public JFileChooser getFileChooser() {
-        return fileChooser;
-    }
-
-    public boolean isRegex() {
-        return isRegex;
-    }
-
-    public Searcher getSearcher() {
-        return searcher;
     }
 }

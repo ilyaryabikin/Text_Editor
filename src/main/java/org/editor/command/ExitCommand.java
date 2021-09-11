@@ -1,15 +1,17 @@
 package org.editor.command;
 
-import org.editor.TextEditor;
+import javax.swing.JFrame;
 
-public class ExitCommand extends Command {
+public class ExitCommand implements EditorCommand {
 
-    public ExitCommand(TextEditor textEditor) {
-        super(textEditor);
+    private final JFrame frame;
+
+    public ExitCommand(final JFrame frame) {
+        this.frame = frame;
     }
 
     @Override
     public void execute() {
-        textEditor.dispose();
+        frame.dispose();
     }
 }

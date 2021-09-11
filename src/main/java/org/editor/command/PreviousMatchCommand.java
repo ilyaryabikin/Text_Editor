@@ -1,22 +1,23 @@
 package org.editor.command;
 
-import org.editor.TextEditor;
+import javax.swing.JTextArea;
 import org.editor.exception.NoMatchedResultsException;
 import org.editor.exception.NoSpecifiedQueryException;
 import org.editor.searcher.Searcher;
 
-import javax.swing.*;
+public class PreviousMatchCommand implements EditorCommand {
 
-public class PreviousMatchCommand extends Command {
+    private final Searcher searcher;
+    private final JTextArea textArea;
 
-    public PreviousMatchCommand(TextEditor textEditor) {
-        super(textEditor);
+    public PreviousMatchCommand(final Searcher searcher,
+                                final JTextArea textArea) {
+        this.searcher = searcher;
+        this.textArea = textArea;
     }
 
     @Override
     public void execute() throws NoSpecifiedQueryException, NoMatchedResultsException {
-        Searcher searcher = textEditor.getSearcher();
-        JTextArea textArea = textEditor.getTextArea();
         if (searcher.getMatchedCount() < 0 && textArea.getText().isEmpty()) {
             throw new NoSpecifiedQueryException("You should specify search query first");
         }

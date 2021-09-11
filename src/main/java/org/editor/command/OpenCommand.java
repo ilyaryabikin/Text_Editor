@@ -1,31 +1,30 @@
 package org.editor.command;
 
-import org.editor.TextEditor;
-
-import javax.swing.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javax.swing.JFileChooser;
+import javax.swing.JTextArea;
 
-public class OpenCommand extends Command {
+public class OpenCommand implements EditorCommand {
 
-    public OpenCommand(TextEditor textEditor) {
-        super(textEditor);
+    private final JFileChooser fileChooser;
+    private final JTextArea textArea;
+
+    public OpenCommand(final JFileChooser fileChooser,
+                       final JTextArea textArea) {
+        this.fileChooser = fileChooser;
+        this.textArea = textArea;
     }
 
     @Override
     public void execute() throws IOException {
-        JFileChooser fileChooser = textEditor.getFileChooser();
         int returnValue = fileChooser.showOpenDialog(null);
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             Path path = fileChooser.getSelectedFile().toPath().toAbsolutePath();
-            String content;
-            if (!Files.exists(path)) {
-                content = "";
-            } else {
-                content = Files.readString(path);
+            if (Files.exists(path)) {
+                textArea.setText(Files.readString(path));
             }
-            textEditor.getTextArea().setText(content);
         }
     }
 }

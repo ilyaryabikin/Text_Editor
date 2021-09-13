@@ -44,11 +44,6 @@ public class TextEditor extends JFrame {
     private static final Border TEXT_PANEL_BORDER = BorderFactory.createEmptyBorder(0, 5, 10, 5);
     private static final Color ICONS_COLOR = new Color(110, 110, 110);
 
-    private JTextArea textArea;
-    private JTextField searchField;
-    private JFileChooser fileChooser;
-    private JCheckBox useRegexCheckbox;
-
     private final Searcher searcher = new Searcher();
 
     public TextEditor() {
@@ -56,9 +51,14 @@ public class TextEditor extends JFrame {
 
         initDefaultFrameProperties();
 
-        initMenu();
-        initUtilPanel();
-        initTextPanel();
+        final JTextArea textArea = new JTextArea();
+        final JTextField searchField = new JTextField();
+        final JFileChooser fileChooser = new JFileChooser();
+        final JCheckBox useRegexCheckbox = new JCheckBox();
+
+        initMenu(fileChooser, textArea, searchField, useRegexCheckbox);
+        initUtilPanel(fileChooser, textArea, searchField, useRegexCheckbox);
+        initTextPanel(textArea);
 
         pack();
 
@@ -81,7 +81,10 @@ public class TextEditor extends JFrame {
         setLayout(new BorderLayout());
     }
 
-    private void initMenu() {
+    private void initMenu(final JFileChooser fileChooser,
+                          final JTextArea textArea,
+                          final JTextField searchField,
+                          final JCheckBox useRegexCheckbox) {
         JMenuBar menuBar = new JMenuBar();
         setJMenuBar(menuBar);
 
@@ -183,11 +186,13 @@ public class TextEditor extends JFrame {
         menuSearch.add(useRegexMenuItem);
     }
 
-    private void initUtilPanel() {
+    private void initUtilPanel(final JFileChooser fileChooser,
+                               final JTextArea textArea,
+                               final JTextField searchField,
+                               final JCheckBox useRegexCheckbox) {
         JPanel utilPanel = new JPanel();
         utilPanel.setLayout(new MigLayout("", "[][][grow][][][][]"));
 
-        fileChooser = new JFileChooser();
         fileChooser.setName("FileChooser");
         fileChooser.setDialogTitle("Select a File");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -216,7 +221,6 @@ public class TextEditor extends JFrame {
             }
         });
 
-        searchField = new JTextField();
         searchField.setName("SearchField");
         searchField.setToolTipText("Enter Search Query");
 
@@ -256,7 +260,7 @@ public class TextEditor extends JFrame {
             }
         });
 
-        useRegexCheckbox = new JCheckBox("Use regex");
+        useRegexCheckbox.setText("Use regex");
         useRegexCheckbox.setName("UseRegExCheckbox");
         useRegexCheckbox.setToolTipText("Handle Search Query as Regular Expression");
         useRegexCheckbox.addActionListener(e -> searcher.setRegex(useRegexCheckbox.isSelected()));
@@ -272,11 +276,10 @@ public class TextEditor extends JFrame {
         add(utilPanel, BorderLayout.PAGE_START);
     }
 
-    private void initTextPanel() {
+    private void initTextPanel(final JTextArea textArea) {
         JPanel textPanel = new JPanel(new BorderLayout());
         textPanel.setBorder(TEXT_PANEL_BORDER);
 
-        textArea = new JTextArea();
         textArea.setName("TextArea");
         textArea.setTabSize(4);
         textArea.setAutoscrolls(true);
